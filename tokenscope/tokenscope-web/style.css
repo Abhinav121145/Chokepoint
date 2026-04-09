@@ -1,0 +1,35 @@
+.nav-btn {
+    @apply px-4 py-1.5 rounded-lg text-sm font-medium text-gray-500 hover:text-white transition-all;
+}
+.nav-btn.active {
+    @apply bg-orange-600 text-white;
+}
+
+.stat-card {
+    @apply bg-[#16181d] border border-gray-800 rounded-xl p-5;
+}
+
+.stat-label {
+    @apply text-xs uppercase font-bold text-gray-500 mb-2;
+}
+
+.stat-value {
+    @apply text-3xl font-black;
+}
+
+/* Heatmap Word Styles */
+.word-tag {
+    @apply px-2 py-1 rounded text-sm font-medium;
+}
+.word-high { @apply bg-orange-600 text-white; }
+.word-medium { @apply bg-orange-900/40 text-orange-200 border border-orange-800; }
+.word-low { @apply bg-gray-800 text-gray-500; }
+
+.tab-content {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
