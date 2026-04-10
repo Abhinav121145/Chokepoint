@@ -3,145 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TokenScope v1.0</title>
+    <title>TokenScope v1.0 | Advanced Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/gpt-tokenizer/dist/index.js"></script>
     <style>
-        .nav-btn { @apply px-4 py-1.5 rounded-lg text-sm font-bold text-gray-500 hover:text-white transition-all; }
-        .nav-btn.active { @apply bg-orange-600 text-white shadow-lg shadow-orange-900/20; }
-        .stat-card { @apply bg-[#16181d] border border-gray-800 p-5 rounded-xl; }
-        .stat-label { @apply text-[10px] font-black uppercase tracking-widest mb-1 flex items-center gap-2; }
-        .stat-value { @apply text-3xl font-black tracking-tight; }
-        .animate-fade { animation: fadeIn 0.4s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        :root {
+            --glass: rgba(22, 24, 29, 0.6);
+            --accent: #f97316;
+            --accent-glow: rgba(249, 115, 22, 0.25);
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 0%, #1c1f26 0%, #0b0c0e 70%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        /* Digital Grid Background */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), 
+                              linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn { @apply px-5 py-2 rounded-xl text-sm font-bold text-gray-400 hover:text-white transition-all; }
+        .nav-btn.active { 
+            background: rgba(249, 115, 22, 0.1);
+            color: var(--accent);
+            box-shadow: inset 0 0 0 1px var(--accent);
+        }
+
+        .stat-label { @apply text-[10px] font-black uppercase tracking-widest flex items-center gap-2 mb-2; }
+        .stat-value { @apply text-4xl font-black tracking-tighter text-white; }
+
+        .glow-btn {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            box-shadow: 0 4px 20px var(--accent-glow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glow-btn:hover:not(:disabled) {
+            box-shadow: 0 8px 30px var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .card-enter { opacity: 0; transform: translateY(20px); }
     </style>
 </head>
-<body class="bg-[#0b0c0e] text-gray-300 antialiased font-sans">
+<body class="text-gray-300 antialiased font-sans">
 
-    <div id="login-page" class="fixed inset-0 z-[100] bg-[#0b0c0e] flex items-center justify-center">
-        <div class="bg-[#16181d] border border-gray-800 p-8 rounded-2xl w-[400px] shadow-2xl">
-            <div class="flex items-center gap-2 mb-6">
-                <div class="w-8 h-8 bg-orange-600 rounded flex items-center justify-center"><i class="fas fa-bullseye text-white"></i></div>
-                <h1 class="text-xl font-bold text-white tracking-tight">TokenScope</h1>
-            </div>
-            <h2 class="text-2xl font-bold text-white mb-2">Developer Login</h2>
-            <p class="text-xs text-gray-500 mb-6 font-medium">API-first access. Least-privilege by default.</p>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">Email</label>
-                    <input type="email" id="login-email" class="w-full bg-[#1c1f26] border border-gray-800 rounded-lg p-3 text-white focus:ring-1 focus:ring-orange-500 outline-none" placeholder="dev@company.com">
+    <div id="login-page" class="fixed inset-0 z-[100] bg-[#0b0c0e] flex items-center justify-center p-6">
+        <div class="glass-card p-10 rounded-3xl w-full max-w-[450px]">
+            <div class="flex flex-col items-center mb-10">
+                <div class="w-16 h-16 bg-orange-600 rounded-2xl flex items-center justify-center shadow-2xl mb-4 rotate-12 hover:rotate-0 transition-transform">
+                    <i class="fas fa-bullseye text-white text-3xl"></i>
                 </div>
-                <div>
-                    <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">Password</label>
-                    <input type="password" id="login-pass" class="w-full bg-[#1c1f26] border border-gray-800 rounded-lg p-3 text-white focus:ring-1 focus:ring-orange-500 outline-none" placeholder="••••••••">
-                </div>
-                <button onclick="handleLogin()" class="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-orange-900/20">Sign In</button>
+                <h1 class="text-3xl font-black text-white tracking-tighter italic">TOKEN<span class="text-orange-500">SCOPE</span></h1>
+                <p class="text-xs text-gray-500 mt-2 font-medium">Advanced LLM Token Analysis Engine</p>
             </div>
-            <p class="text-center text-[10px] text-gray-600 mt-6 italic">Pro-tip: The Developer/Admin toggle is a UI demo.</p>
+            <div class="space-y-5">
+                <input type="email" id="login-email" class="w-full bg-black/40 border border-white/5 rounded-2xl p-4 text-white outline-none focus:ring-1 focus:ring-orange-500" placeholder="dev@company.com">
+                <input type="password" id="login-pass" class="w-full bg-black/40 border border-white/5 rounded-2xl p-4 text-white outline-none focus:ring-1 focus:ring-orange-500" placeholder="••••••••">
+                <button onclick="handleLogin()" class="w-full glow-btn text-white font-black py-4 rounded-2xl">INITIATE SYSTEM</button>
+            </div>
         </div>
     </div>
 
     <div id="main-app" class="hidden">
-        <nav class="border-b border-gray-800 p-4 flex justify-between items-center bg-[#0b0c0e]/80 backdrop-blur-md sticky top-0 z-50">
-            <div class="flex items-center gap-2">
-                <span class="bg-orange-600 p-1.5 rounded text-white"><i class="fas fa-bullseye"></i></span>
-                <span class="text-lg font-bold text-white tracking-tight">TokenScope <small class="text-[10px] text-gray-500 bg-gray-900 px-1 rounded ml-1 font-mono">v1.0</small></span>
+        <nav class="border-b border-white/5 p-4 flex justify-between items-center bg-[#0b0c0e]/60 backdrop-blur-xl sticky top-0 z-50">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-orange-600 rounded flex items-center justify-center"><i class="fas fa-bullseye text-white text-xs"></i></div>
+                <span class="text-xl font-black text-white italic">T<span class="text-orange-500">S</span></span>
             </div>
-            <div class="flex gap-1">
+            <div class="flex gap-2 bg-black/30 p-1.5 rounded-2xl border border-white/5">
                 <button onclick="switchTab('analyze')" id="nav-analyze" class="nav-btn active">Analyze</button>
                 <button onclick="switchTab('compare')" id="nav-compare" class="nav-btn">Compare</button>
                 <button onclick="switchTab('history')" id="nav-history" class="nav-btn">History</button>
             </div>
         </nav>
 
-        <main class="max-w-6xl mx-auto p-6 space-y-6">
-            
-            <section id="tab-analyze" class="tab-content space-y-6">
-                <div class="bg-[#16181d] border border-gray-800 rounded-xl p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest">Enter Your Prompt</h3>
-                        <div class="flex gap-3">
-                            <button onclick="location.reload()" class="text-xs text-gray-500 hover:text-white transition"><i class="fas fa-redo mr-1"></i> New Conversation</button>
-                            <button onclick="downloadPDF()" class="text-xs bg-gray-800 hover:bg-gray-700 text-white px-3 py-1.5 rounded border border-gray-700"><i class="fas fa-file-pdf text-orange-500 mr-1"></i> Export PDF</button>
-                        </div>
+        <main class="max-w-6xl mx-auto p-6 space-y-8">
+            <section id="tab-analyze" class="tab-content space-y-8">
+                <div class="glass-card rounded-3xl p-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Neural Input</h3>
+                        <button onclick="downloadPDF()" class="text-[10px] bg-white/5 text-white px-4 py-2 rounded-xl border border-white/10 font-bold uppercase transition hover:bg-white/10">Export Report</button>
                     </div>
-                    <textarea id="analyzeInput" class="w-full h-32 bg-[#1c1f26] border border-gray-800 rounded-lg p-4 text-white focus:ring-1 focus:ring-orange-500 outline-none transition-all" placeholder="Enter the prompt here.."></textarea>
-                    <div class="flex justify-end mt-4">
-                        <button onclick="processAnalyze()" class="bg-orange-600 hover:bg-orange-500 text-white font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 transition-all shadow-lg shadow-orange-900/20"><i class="fas fa-bolt"></i> Process Prompt</button>
+                    <textarea id="analyzeInput" class="w-full h-40 bg-black/40 border border-white/5 rounded-2xl p-6 text-white outline-none focus:ring-1 focus:ring-orange-500 placeholder-gray-700 text-lg" placeholder="Enter prompt for edge analysis..."></textarea>
+                    <div class="flex justify-between items-center mt-6">
+                        <span id="edge-latency-tag" class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Edge Node: <b class="text-green-500">Standby</b></span>
+                        <button onclick="processAnalyze()" id="processBtn" class="glow-btn text-white font-black px-10 py-3 rounded-2xl flex items-center gap-3"><i class="fas fa-bolt"></i> PROCESS PAYLOAD</button>
                     </div>
                 </div>
 
-                <div id="analyze-results" class="hidden space-y-6 animate-fade">
+                <div id="analyze-results" class="hidden space-y-8">
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div class="stat-card">
-                            <p class="stat-label text-blue-400"><i class="fas fa-download"></i> Input Tokens</p>
-                            <h2 id="m-in" class="stat-value text-blue-400">0</h2>
-                        </div>
-                        <div class="stat-card">
-                            <p class="stat-label text-green-400"><i class="fas fa-upload"></i> Output Tokens</p>
-                            <h2 id="m-out" class="stat-value text-green-400">0</h2>
-                        </div>
-                        <div class="stat-card">
-                            <p class="stat-label text-orange-400"><i class="fas fa-bolt"></i> Total Tokens</p>
-                            <h2 id="m-total" class="stat-value text-orange-400">0</h2>
-                        </div>
-                        <div class="stat-card">
-                            <p class="stat-label text-orange-600"><i class="fas fa-dollar-sign"></i> Est. Cost</p>
-                            <h2 id="m-cost" class="stat-value text-orange-600">$0.00</h2>
+                        <div class="glass-card p-6 rounded-2xl border-l-4 border-blue-500 card-enter"><p class="stat-label text-blue-400">Edge Tokens</p><h2 id="m-in" class="stat-value">0</h2></div>
+                        <div class="glass-card p-6 rounded-2xl border-l-4 border-green-500 card-enter"><p class="stat-label text-green-400">Out Tokens</p><h2 id="m-out" class="stat-value">0</h2></div>
+                        <div class="glass-card p-6 rounded-2xl border-l-4 border-orange-500 card-enter"><p class="stat-label text-orange-400">Aggregated</p><h2 id="m-total" class="stat-value">0</h2></div>
+                        <div class="glass-card p-6 rounded-2xl border-l-4 border-green-600 bg-green-500/5 card-enter"><p class="stat-label text-green-500">ROI Savings</p><h2 id="m-saved" class="stat-value text-green-400">0%</h2></div>
+                    </div>
+                    <div class="glass-card p-8 rounded-3xl card-enter">
+                        <h4 class="text-xs font-bold text-gray-500 uppercase mb-6 tracking-widest">Efficiency Differential</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                            <div class="space-y-4">
+                                <div class="space-y-1"><div class="flex justify-between text-[10px] font-bold text-gray-500"><span>CLOUD</span><span>450ms</span></div><div class="w-full bg-white/5 h-2 rounded-full"><div class="bg-orange-600/50 h-full w-[95%]"></div></div></div>
+                                <div class="space-y-1"><div class="flex justify-between text-[10px] font-bold text-green-500"><span>EDGE</span><span>2ms</span></div><div class="w-full bg-white/5 h-2 rounded-full"><div class="bg-green-500 h-full w-[5%] shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div></div></div>
+                            </div>
+                            <div class="flex items-center gap-6 bg-white/5 p-4 rounded-2xl">
+                                <div class="relative w-16 h-16"><svg class="w-full h-full -rotate-90" viewBox="0 0 36 36"><path class="text-white/10" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /><path class="text-green-500" stroke-width="3" stroke-dasharray="85, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /></svg><span class="absolute inset-0 flex items-center justify-center text-xs font-black text-green-500">85%</span></div>
+                                <p class="text-xs text-gray-500 italic">"Offloaded 85% of analysis to the device."</p>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        <div class="stat-card">
-                            <h4 class="text-xs font-bold text-gray-500 uppercase mb-4">TF-IDF Heatmap</h4>
-                            <div id="heatmap" class="flex flex-wrap gap-2"></div>
-                        </div>
-                        <div class="stat-card border-dashed border-orange-900/50">
-                            <h4 class="text-xs font-bold text-gray-500 uppercase mb-4">Suggested Trimmed Prompt</h4>
-                            <div id="trimmedText" class="bg-[#1c1f26] p-3 rounded font-mono text-sm mb-3 border border-gray-800"></div>
-                            <p class="text-[10px] text-green-500 font-bold"><i class="fas fa-chart-line mr-1"></i> Savings: <span id="m-saved">0%</span></p>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="flex justify-between items-center mb-4">
-                            <h4 class="text-xs font-bold text-gray-500 uppercase">RAG Token Breakdown</h4>
-                            <i class="fas fa-database text-orange-500 text-xs"></i>
-                        </div>
-                        <div class="w-full h-2.5 bg-gray-800 rounded-full flex overflow-hidden mb-6">
-                            <div id="bar-system" class="bg-blue-500 transition-all duration-700"></div>
-                            <div id="bar-context" class="bg-orange-500 transition-all duration-700"></div>
-                            <div id="bar-query" class="bg-green-500 transition-all duration-700"></div>
-                        </div>
-                        <div class="grid grid-cols-3 gap-4 text-[11px]">
-                            <div class="flex flex-col"><span class="text-gray-500 uppercase font-black mb-1">System</span><span id="val-system" class="text-blue-400 font-bold">0</span></div>
-                            <div class="flex flex-col"><span class="text-gray-500 uppercase font-black mb-1">Context</span><span id="val-context" class="text-orange-400 font-bold">0</span></div>
-                            <div class="flex flex-col"><span class="text-gray-500 uppercase font-black mb-1">Query</span><span id="val-query" class="text-green-400 font-bold">0</span></div>
-                        </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="glass-card p-8 rounded-3xl card-enter"><h4 class="text-xs font-bold text-gray-500 uppercase mb-6 tracking-widest">Heatmap</h4><div id="heatmap" class="flex flex-wrap gap-2"></div></div>
+                        <div class="glass-card p-8 rounded-3xl border-dashed border-orange-500/30 card-enter"><h4 class="text-xs font-bold text-gray-500 uppercase mb-4 tracking-widest">Optimized Context</h4><div id="trimmedText" class="bg-black/40 p-5 rounded-2xl font-mono text-sm mb-4 border border-white/5 text-orange-200"></div><p id="insight-text" class="text-xs text-gray-500 italic"></p></div>
                     </div>
                 </div>
             </section>
 
-            <section id="tab-compare" class="tab-content hidden space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <textarea id="comp1" class="bg-[#16181d] border border-gray-800 p-4 rounded-xl h-40 outline-none focus:ring-1 focus:ring-orange-500" placeholder="Prompt A"></textarea>
-                    <textarea id="comp2" class="bg-[#16181d] border border-gray-800 p-4 rounded-xl h-40 outline-none focus:ring-1 focus:ring-orange-500" placeholder="Prompt B"></textarea>
+            <section id="tab-compare" class="tab-content hidden space-y-8">
+                <div class="glass-card rounded-3xl p-8">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">Differential Lab</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <textarea id="comp1" class="w-full bg-black/40 border border-white/5 rounded-2xl p-6 text-white outline-none focus:ring-1 focus:ring-blue-500 h-48" placeholder="Payload Alpha..."></textarea>
+                        <textarea id="comp2" class="w-full bg-black/40 border border-white/5 rounded-2xl p-6 text-white outline-none focus:ring-1 focus:ring-orange-500 h-48" placeholder="Payload Beta..."></textarea>
+                    </div>
+                    <div class="flex justify-center mt-8"><button onclick="processCompare()" class="glow-btn text-white font-black px-12 py-4 rounded-2xl"><i class="fas fa-exchange-alt mr-2"></i> ANALYZE DIFFERENTIAL</button></div>
                 </div>
-                <div class="flex justify-center"><button onclick="processCompare()" class="bg-orange-600 px-10 py-3 rounded-xl font-bold hover:bg-orange-500 transition-all">Compare Prompts</button></div>
-                <div id="compare-results" class="hidden animate-fade"></div>
+                <div id="compare-results" class="hidden animate-fade space-y-6"></div>
             </section>
 
-            <section id="tab-history" class="tab-content hidden">
-                <div class="bg-[#16181d] border border-gray-800 rounded-xl p-6">
-                    <h3 class="text-xs font-bold text-gray-500 uppercase mb-4">Session History</h3>
-                    <div id="history-list" class="space-y-3">
-                        <p class="text-gray-600 italic">No logs yet.</p>
+            <section id="tab-history" class="tab-content hidden space-y-8">
+                <div class="glass-card rounded-3xl p-8 min-h-[500px]">
+                    <div class="flex justify-between items-center mb-10">
+                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Archive</h3>
+                        <div class="flex gap-6"><div class="text-right"><p class="text-[9px] text-gray-500 font-black uppercase">Count</p><p id="hist-count" class="text-xl font-black text-white">0</p></div><div class="text-right"><p class="text-[9px] text-gray-500 font-black uppercase">ROI</p><p id="hist-saved" class="text-xl font-black text-green-500">$0.00</p></div></div>
                     </div>
+                    <div id="history-list" class="space-y-4"></div>
                 </div>
             </section>
         </main>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
