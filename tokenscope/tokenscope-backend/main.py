@@ -209,4 +209,8 @@ async def compare(req: CompareRequest):
         "prompt1": {**res1["metrics"], "cost": res1["metrics"]["cost_estimate"]},
         "prompt2": {**res2["metrics"], "cost": res2["metrics"]["cost_estimate"]},
         "result": {"winner": winner}
+<<<<<<< HEAD
     }
+=======
+    }
+>>>>>>> 22b0d1f252220d7bf4fc8dd77290b5e2cb7c3e76
