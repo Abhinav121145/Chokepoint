@@ -111,4 +111,8 @@ async function downloadPDF() {
     const blob = await res.blob();
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a'); a.href = url; a.download = "TokenScope_Report.pdf"; a.click();
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 22b0d1f252220d7bf4fc8dd77290b5e2cb7c3e76
